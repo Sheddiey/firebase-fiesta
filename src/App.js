@@ -1,7 +1,11 @@
+import Auth from "./Components/Auth";
+
 const App = () => {
   return (
-    <div> <h3>Firebase fiesta</h3></div>
+    <div>
+      <Auth />
+    </div>
   );
-}
+};
 
 export default App;
