@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import Auth from "./Components/Auth";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "./config/firebase";
 
 const App = () => {
@@ -26,6 +32,16 @@ const App = () => {
     }
   };
 
+  const deleteMovie = async (id) => {
+    try {
+      const movieDoc = doc(db, "movies", id);
+      await deleteDoc(movieDoc);
+      getMovieList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     getMovieList();
   }, []);
@@ -36,9 +52,9 @@ const App = () => {
         title: newMovieTitle,
         releaseDate: newReleaseDate,
         receivedAnOscar: isNewMovieOscar,
-      })
+      });
       getMovieList();
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
   };
@@ -58,7 +74,11 @@ const App = () => {
           placeholder="Release date..."
           onChange={(e) => setNewReleaseDate(Number(e.target.value))}
         />
-        <input type="checkbox" checked={isNewMovieOscar} onChange={(e) => setIsNewMovieOscar(e.target.checked)}/>
+        <input
+          type="checkbox"
+          checked={isNewMovieOscar}
+          onChange={(e) => setIsNewMovieOscar(e.target.checked)}
+        />
         <label htmlFor="">Received an Oscar</label>
         <button onClick={onSubmitMovie}>Submit Movie</button>
       </div>
@@ -70,6 +90,7 @@ const App = () => {
               {movie.title}
             </h1>
             <p>Date: {movie.releaseDate}</p>
+            <button onClick={() => deleteMovie(movie.id)}>Delete Movie</button>
           </div>
         ))}
       </div>
