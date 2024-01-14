@@ -6,6 +6,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "./config/firebase";
 
@@ -16,6 +17,9 @@ const App = () => {
   const [newMovieTitle, setNewMovieTitle] = useState("");
   const [newReleaseDate, setNewReleaseDate] = useState("");
   const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
+
+  // Update Title State
+  const [updatedTitle, setUpdatedTitle] = useState("");
 
   const movieCollectionRef = collection(db, "movies");
 
@@ -42,9 +46,7 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    getMovieList();
-  }, []);
+  
 
   const onSubmitMovie = async () => {
     try {
@@ -58,6 +60,21 @@ const App = () => {
       console.error(err);
     }
   };
+
+  const updateMovietitle = async (id) => {
+    try {
+      const movieDoc = doc(db, "movies", id);
+      await updateDoc(movieDoc, {
+        title: updatedTitle
+      });
+      getMovieList();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  useEffect(() => {
+    getMovieList();
+  }, []);
 
   return (
     <div>
@@ -91,6 +108,13 @@ const App = () => {
             </h1>
             <p>Date: {movie.releaseDate}</p>
             <button onClick={() => deleteMovie(movie.id)}>Delete Movie</button>
+
+            <input
+              type="text"
+              placeholder="new title..."
+              onChange={(e) => setUpdatedTitle(e.target.value)}
+            />
+            <button onClick={() => updateMovietitle(movie.id)}>Update Title</button>
           </div>
         ))}
       </div>
